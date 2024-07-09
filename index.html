@@ -224,7 +224,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch('http://localhost:1434/login', {
+            fetch('https://tunaniinvetarioapi.onrender.com/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -245,7 +245,7 @@
         });
 
         function loadInventory() {
-            fetch('http://localhost:1434/inventario')
+            fetch('https://tunaniinvetarioapi.onrender.com/inventario')
             .then(response => response.json())
             .then(data => {
                 const content = document.getElementById('inventory-content');
@@ -293,7 +293,7 @@
 }
 
         function loadProductTypes() {
-            fetch('http://localhost:1434/tiposProductos')
+            fetch('https://tunaniinvetarioapi.onrender.com/tiposProductos')
             .then(response => response.json())
             .then(data => {
                 const addSelect = document.getElementById('new-product-type');
@@ -334,7 +334,7 @@
             const unidadId = document.getElementById('new-product-unit').value;
             const tipoId = document.getElementById('new-product-type').value;
 
-            fetch('http://localhost:1434/addProduct', {
+            fetch('https://tunaniinvetarioapi.onrender.com/addProduct', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -382,7 +382,7 @@
             const unidadId = document.getElementById('update-product-unit').value;
             const tipoId = document.getElementById('update-product-type').value;
 
-            fetch(`http://localhost:1434/updateProduct/${id}`, {
+            fetch(`https://tunaniinvetarioapi.onrender.com/updateProduct/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -398,7 +398,7 @@
         }
 
         function loadUnits() {
-            fetch('http://localhost:1434/unidadesMedida')
+            fetch('https://tunaniinvetarioapi.onrender.com/unidadesMedida')
             .then(response => response.json())
             .then(data => {
                 const addSelect = document.getElementById('new-product-unit');
@@ -421,7 +421,7 @@
         function searchProducts() {
             const query = document.getElementById('search-query').value;
 
-            fetch(`http://localhost:1434/searchProducts?query=${query}`)
+            fetch(`https://tunaniinvetarioapi.onrender.com/searchProducts?query=${query}`)
             .then(response => response.json())
             .then(data => {
                 const content = document.getElementById('inventory-content');
@@ -470,7 +470,7 @@
 
         function deleteProduct(id) {
             if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-                fetch(`http://localhost:1434/deleteProduct/${id}`, {
+                fetch(`https://tunaniinvetarioapi.onrender.com/deleteProduct/${id}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
