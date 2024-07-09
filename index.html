@@ -224,7 +224,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch('https://tunaniinvetarioapi.onrender.com/login', {
+            fetch('http://localhost:1434/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -245,7 +245,7 @@
         });
 
         function loadInventory() {
-            fetch('https://tunaniinvetarioapi.onrender.com/inventario')
+            fetch('http://localhost:1434/inventario')
             .then(response => response.json())
             .then(data => {
                 const content = document.getElementById('inventory-content');
@@ -292,6 +292,27 @@
             });
 }
 
+        function loadProductTypes() {
+            fetch('http://localhost:1434/tiposProductos')
+            .then(response => response.json())
+            .then(data => {
+                const addSelect = document.getElementById('new-product-type');
+                const updateSelect = document.getElementById('update-product-type');
+                addSelect.innerHTML = '';
+                updateSelect.innerHTML = '';
+
+                data.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.id;
+                    option.innerText = tipo.tipo;
+                    addSelect.appendChild(option);
+
+                    const updateOption = option.cloneNode(true);
+                    updateSelect.appendChild(updateOption);
+                });
+            });
+        }
+
         // Mostrar formulario de añadir producto
         function showAddProductForm() {
             const modal = document.getElementById('add-product-modal');
@@ -313,7 +334,7 @@
             const unidadId = document.getElementById('new-product-unit').value;
             const tipoId = document.getElementById('new-product-type').value;
 
-            fetch('https://tunaniinvetarioapi.onrender.com/addProduct', {
+            fetch('http://localhost:1434/addProduct', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -332,102 +353,75 @@
 
         // Mostrar formulario de actualizar producto
         function showUpdateProductForm(id, nombre, cantidad, unidadId, tipoId) {
-    const modal = document.getElementById('update-product-modal');
-    modal.style.display = 'block';
+            const modal = document.getElementById('update-product-modal');
+            modal.style.display = 'block';
 
-    document.getElementById('update-product-id').value = id;
-    document.getElementById('update-product-name').value = nombre;
-    document.getElementById('update-product-quantity').value = cantidad;
+            document.getElementById('update-product-id').value = id;
+            document.getElementById('update-product-name').value = nombre;
+            document.getElementById('update-product-quantity').value = cantidad;
 
-    Promise.all([loadUnits(), loadProductTypes()]).then(() => {
-        document.getElementById('update-product-unit').value = unidadId;
-        document.getElementById('update-product-type').value = tipoId;
-    }).catch(error => {
-        console.error('Error loading units or product types:', error);
-        alert('Error loading units or product types');
-    });
-}
+            loadUnits('update-product-unit');
+            loadProductTypes('update-product-type');
 
-// Cerrar formulario de actualizar producto
-function closeUpdateProductForm() {
-    const modal = document.getElementById('update-product-modal');
-    modal.style.display = 'none';
-}
-
-function updateProduct() {
-    const id = document.getElementById('update-product-id').value;
-    const nombre = document.getElementById('update-product-name').value;
-    const cantidad = document.getElementById('update-product-quantity').value;
-    const unidadId = document.getElementById('update-product-unit').value;
-    const tipoId = document.getElementById('update-product-type').value;
-
-    fetch(`https://tunaniinvetarioapi.onrender.com/updateProduct/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nombre, cantidad, unidad_id: unidadId, tipo_id: tipoId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Producto actualizado');
-            loadInventory();
-            closeUpdateProductForm();
-        } else {
-            alert('Error al actualizar el producto');
+            setTimeout(() => {
+                document.getElementById('update-product-unit').value = unidadId;
+                document.getElementById('update-product-type').value = tipoId;
+            }, 100); // Esperar un momento para asegurarse de que las opciones se carguen
         }
-    }).catch(error => {
-        console.error('Error updating product:', error);
-        alert('Error updating product');
-    });
-}
 
-function loadUnits() {
-    return fetch('https://tunaniinvetarioapi.onrender.com/unidadesMedida')
-        .then(response => response.json())
-        .then(data => {
-            const addSelect = document.getElementById('new-product-unit');
-            const updateSelect = document.getElementById('update-product-unit');
-            addSelect.innerHTML = '<option value="">Seleccione una unidad</option>';
-            updateSelect.innerHTML = '<option value="">Seleccione una unidad</option>';
+        // Cerrar formulario de actualizar producto
+        function closeUpdateProductForm() {
+            const modal = document.getElementById('update-product-modal');
+            modal.style.display = 'none';
+        }
 
-            data.forEach(unidad => {
-                const option = document.createElement('option');
-                option.value = unidad.id;
-                option.innerText = unidad.unidad;
-                addSelect.appendChild(option);
+        function updateProduct() {
+            const id = document.getElementById('update-product-id').value;
+            const nombre = document.getElementById('update-product-name').value;
+            const cantidad = document.getElementById('update-product-quantity').value;
+            const unidadId = document.getElementById('update-product-unit').value;
+            const tipoId = document.getElementById('update-product-type').value;
 
-                const updateOption = option.cloneNode(true);
-                updateSelect.appendChild(updateOption);
+            fetch(`http://localhost:1434/updateProduct/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, cantidad, unidad_id: unidadId, tipo_id: tipoId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Producto actualizado');
+                loadInventory();
+                closeUpdateProductForm();
             });
-        });
-}
-
-        function loadProductTypes() {
-            return fetch('https://tunaniinvetarioapi.onrender.com/tiposProductos')
-                .then(response => response.json())
-                .then(data => {
-                    const addSelect = document.getElementById('new-product-type');
-                    const updateSelect = document.getElementById('update-product-type');
-                    addSelect.innerHTML = '';
-                    updateSelect.innerHTML = '';
-
-                    data.forEach(tipo => {
-                        const option = document.createElement('option');
-                        option.value = tipo.id;
-                        option.innerText = tipo.tipo;
-                        addSelect.appendChild(option);
-
-                        const updateOption = option.cloneNode(true);
-                        updateSelect.appendChild(updateOption);
-                    });
-                });
         }
+
+        function loadUnits() {
+            fetch('http://localhost:1434/unidadesMedida')
+            .then(response => response.json())
+            .then(data => {
+                const addSelect = document.getElementById('new-product-unit');
+                const updateSelect = document.getElementById('update-product-unit');
+                addSelect.innerHTML = '';
+                updateSelect.innerHTML = '';
+
+                data.forEach(unidad => {
+                    const option = document.createElement('option');
+                    option.value = unidad.id;
+                    option.innerText = unidad.unidad;
+                    addSelect.appendChild(option);
+
+                    const updateOption = option.cloneNode(true);
+                    updateSelect.appendChild(updateOption);
+                });
+            });
+        }
+
         function searchProducts() {
             const query = document.getElementById('search-query').value;
 
-            fetch(`https://tunaniinvetarioapi.onrender.com/searchProducts?query=${query}`)
+            fetch(`http://localhost:1434/searchProducts?query=${query}`)
             .then(response => response.json())
             .then(data => {
                 const content = document.getElementById('inventory-content');
@@ -476,7 +470,7 @@ function loadUnits() {
 
         function deleteProduct(id) {
             if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-                fetch(`https://tunaniinvetarioapi.onrender.com/deleteProduct/${id}`, {
+                fetch(`http://localhost:1434/deleteProduct/${id}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
